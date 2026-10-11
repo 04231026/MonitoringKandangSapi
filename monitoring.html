@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FarmGuard — Dashboard Pemantauan Kandang Sapi</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      background-color: #fcf5f7;
+      color: #331019;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 260px;
+      background-color: #a31145;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 32px;
+      padding: 0 8px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: #fde8ef;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .menu-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #f7a3be;
+      margin-bottom: 12px;
+      padding: 0 8px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: #fbcfe0;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      background-color: #c41857;
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background-color: #ff2a75;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 32px;
+      background-color: #fff;
+      border-bottom: 1px solid #f9e2eb;
+    }
+
+    .page-header h2 {
+      font-size: 20px;
+      color: #800a35;
+    }
+
+    .page-header p {
+      font-size: 13px;
+      color: #8c6a75;
+      margin-top: 2px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .weather-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background-color: #fff8fa;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid #f9e2eb;
+    }
+
+    .weather-pill .temp {
+      font-weight: bold;
+      font-size: 14px;
+      color: #a31145;
+    }
+
+    .weather-pill .sub {
+      font-size: 11px;
+      color: #8c6a75;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #800a35;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: #8c6a75;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      background-color: #fde8ef;
+      color: #a31145;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* Dashboard Container */
+    .container {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active-content {
+      display: block;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, #c41857, #800a35);
+      color: #fff;
+      border-radius: 16px;
+      padding: 36px;
+      position: relative;
+    }
+
+    .hero-tag {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #fbcfe0;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .hero-title {
+      font-size: 32px;
+      line-height: 1.2;
+      font-weight: 700;
+      max-width: 550px;
+      margin-bottom: 16px;
+    }
+
+    .hero-desc {
+      font-size: 13px;
+      color: #fde8ef;
+      max-width: 550px;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .btn-primary {
+      background-color: #fde8ef;
+      color: #800a35;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-primary:hover {
+      background-color: #fbcfe0;
+    }
+
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 16px;
+    }
+
+    .stat-badge {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 12px;
+    }
+
+    .stat-badge .label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #fbcfe0;
+      margin-bottom: 4px;
+    }
+
+    .stat-badge .value {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #ff6699;
+      border-radius: 50%;
+    }
+
+    .temp-card-overlay {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-align: right;
+    }
+
+    .temp-card-overlay .temp-val {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .temp-card-overlay .temp-sub {
+      font-size: 11px;
+      color: #fde8ef;
+    }
+
+    /* Section Header */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 16px;
+      margin-top: 28px;
+    }
+
+    .section-header h3 {
+      font-size: 16px;
+      color: #800a35;
+    }
+
+    .section-header p {
+      font-size: 12px;
+      color: #8c6a75;
+    }
+
+    /* Box Akses Menu Utama (Pink Grid) */
+    .menu-boxes-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .menu-box {
+      background: #fff;
+      border: 1px solid #f9e2eb;
+      border-radius: 14px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 140px;
+    }
+
+    .menu-box:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(163, 17, 69, 0.12);
+      border-color: #c41857;
+    }
+
+    .menu-box-icon {
+      width: 44px;
+      height: 44px;
+      background-color: #fde8ef;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .menu-box-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #800a35;
+      margin-top: 10px;
+    }
+
+    .menu-box-desc {
+      font-size: 11px;
+      color: #8c6a75;
+      margin-top: 2px;
+    }
+
+    .menu-box-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      color: #c41857;
+      margin-top: 12px;
+    }
+
+    /* Indicator Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #f9e2eb;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 130px;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .card-icon.pink { background-color: #ffe3e3; }
+    .card-icon.blue { background-color: #e7f5ff; }
+    .card-icon.purple { background-color: #f3d9fa; }
+    .card-icon.orange { background-color: #ffe8cc; }
+    .card-icon.green { background-color: #e8f5e9; }
+    .card-icon.yellow { background-color: #fff9db; }
+
+    .card-tag {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    .tag-normal { background-color: #ffe8f0; color: #a31145; }
+    .tag-warning { background-color: #fff4e6; color: #d9480f; }
+
+    .card-bottom {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .card-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #331019;
+    }
+
+    .card-unit {
+      font-size: 12px;
+      color: #8c6a75;
+    }
+
+    /* Form Input & Progress Bar */
+    .form-card {
+      background: #fff;
+      border: 1px solid #f9e2eb;
+      border-radius: 14px;
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #800a35;
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      display: flex;
+      gap: 12px;
+    }
+
+    .form-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #f9e2eb;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      border-color: #c41857;
+    }
+
+    .btn-update {
+      background-color: #a31145;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-update:hover {
+      background-color: #c41857;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background-color: #fde8ef;
+      border-radius: 5px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background-color: #a31145;
+      border-radius: 5px;
+      transition: width 0.3s ease;
+    }
+
+    /* Info Box */
+    .info-box {
+      background: #fff;
+      border: 1px solid #f9e2eb;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .info-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #800a35;
+      margin-bottom: 8px;
+    }
+
+    .info-desc {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    /* Table Styles */
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    .report-table th {
+      text-align: left;
+      padding: 12px;
+      background: #fff8fa;
+      color: #800a35;
+      border-bottom: 1px solid #f9e2eb;
+    }
+
+    .report-table td {
+      padding: 12px;
+      border-bottom: 1px solid #f9e2eb;
+      color: #331019;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Navigasi Pink -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🐄</div>
+      <span>FarmGuard</span>
+    </div>
+
+    <div class="menu-title">Menu Pemantauan</div>
+    <ul class="nav-list">
+      <li><button class="nav-item active" id="btn-beranda" onclick="switchTab('beranda', 'Beranda Utama', this)">🏠 Beranda Utama</button></li>
+      <li><button class="nav-item" id="btn-lingkungan" onclick="switchTab('lingkungan', 'Kondisi Lingkungan', this)">🌡️ Kondisi Lingkungan</button></li>
+      <li><button class="nav-item" id="btn-ternak" onclick="switchTab('ternak', 'Pemantauan Ternak', this)">🐄 Pemantauan Ternak</button></li>
+      <li><button class="nav-item" id="btn-pakan" onclick="switchTab('pakan', 'Pakan dan Minum', this)">🌾 Pakan dan Minum</button></li>
+      <li><button class="nav-item" id="btn-laporan" onclick="switchTab('laporan', 'Riwayat dan Laporan', this)">📊 Riwayat dan Laporan</button></li>
+    </ul>
+  </aside>
+
+  <!-- Konten Utama -->
+  <div class="main-content">
+    
+    <!-- Header Atas -->
+    <header class="topbar">
+      <div class="page-header">
+        <h2 id="page-title">Beranda Utama</h2>
+        <p>Ringkasan kondisi kandang hari ini</p>
+      </div>
+
+      <div class="topbar-right">
+        <div class="weather-pill">
+          <span>☀️</span>
+          <div>
+            <div class="temp" id="header-temp">29.3°C</div>
+            <div class="sub">Area kandang</div>
+          </div>
+        </div>
+
+        <div class="user-profile">
+          <div class="user-info">
+            <div class="user-name">Administrator Kandang</div>
+            <div class="user-role">Pengelola ternak</div>
+          </div>
+          <div class="avatar">A</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Isian Dashboard -->
+    <main class="container">
+      
+      <!-- Halaman Beranda Utama -->
+      <div id="tab-beranda" class="tab-content active-content">
+        <section class="hero-banner">
+          <div class="hero-tag">Smart Livestock Monitoring System</div>
+          <h1 class="hero-title">Pemantauan Cerdas Kesehatan dan Lingkungan Kandang.</h1>
+          <p class="hero-desc">
+            Pantau kondisi lingkungan kandang, aktivitas perangkat, ketersediaan pakan dan air minum, serta indikasi kondisi ternak dalam satu dashboard terintegrasi.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn-primary" onclick="goToTab('lingkungan', 'btn-lingkungan', 'Kondisi Lingkungan')">👁️ Lihat Kondisi Kandang</button>
+            <button class="btn-secondary" onclick="perbaruiData()">🔄 Perbarui Data</button>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat-badge">
+              <div class="label">Status Sistem</div>
+              <div class="value">
+                <span class="status-dot"></span>
+                Berjalan normal
+              </div>
+            </div>
+
+            <div class="stat-badge">
+              <div class="label">Pembaruan Terakhir</div>
+              <div class="value" id="last-update">11 Okt 2026 · 19:22</div>
+            </div>
+          </div>
+
+          <div class="temp-card-overlay">
+            <div>🌡️</div>
+            <div class="temp-val" id="hero-temp">29.3°C</div>
+            <div class="temp-sub">Suhu area kandang</div>
+          </div>
+        </section>
+
+        <!-- Section Box Menu Utama Akses Cepat -->
+        <section>
+          <div class="section-header">
+            <div>
+              <h3>Menu Fitur Utama</h3>
+              <p>Pilih menu di bawah ini untuk mengakses fitur pemantauan penuh</p>
+            </div>
+          </div>
+
+          <div class="menu-boxes-grid">
+            <div class="menu-box" onclick="goToTab('lingkungan', 'btn-lingkungan', 'Kondisi Lingkungan')">
+              <div>
+                <div class="menu-box-icon">🌡️</div>
+                <div class="menu-box-title">Kondisi Lingkungan</div>
+                <div class="menu-box-desc">Suhu, kelembapan, THI, gas amonia, & kecepatan kipas.</div>
+              </div>
+              <div class="menu-box-footer">
+                <span>Buka Menu</span>
+                <span>→</span>
+              </div>
+            </div>
+
+            <div class="menu-box" onclick="goToTab('ternak', 'btn-ternak', 'Pemantauan Ternak')">
+              <div>
+                <div class="menu-box-icon">🐄</div>
+                <div class="menu-box-title">Pemantauan Ternak</div>
+                <div class="menu-box-desc">Jumlah & kondisi kesehatan sapi berdasarkan THI.</div>
+              </div>
+              <div class="menu-box-footer">
+                <span>Buka Menu</span>
+                <span>→</span>
+              </div>
+            </div>
+
+            <div class="menu-box" onclick="goToTab('pakan', 'btn-pakan', 'Pakan dan Minum')">
+              <div>
+                <div class="menu-box-icon">🌾</div>
+                <div class="menu-box-title">Pakan dan Minum</div>
+                <div class="menu-box-desc">Input & kontrol stok pakan (kg) dan minum (liter).</div>
+              </div>
+              <div class="menu-box-footer">
+                <span>Buka Menu</span>
+                <span>→</span>
+              </div>
+            </div>
+
+            <div class="menu-box" onclick="goToTab('laporan', 'btn-laporan', 'Riwayat dan Laporan')">
+              <div>
+                <div class="menu-box-icon">📊</div>
+                <div class="menu-box-title">Riwayat & Laporan</div>
+                <div class="menu-box-desc">Rekap data terpadu harian & bulanan seluruh modul.</div>
+              </div>
+              <div class="menu-box-footer">
+                <span>Buka Menu</span>
+                <span>→</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Tab Kondisi Lingkungan -->
+      <div id="tab-lingkungan" class="tab-content">
+        <div class="section-header">
+          <div>
+            <h3>Pemantauan Parameter Lingkungan & Kipas Kandang</h3>
+            <p>Data pemantauan sensor dan otomatisasi kipas secara real-time</p>
+          </div>
+        </div>
+
+        <div class="cards-grid">
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon pink">🌡️</div>
+              <span class="card-tag tag-normal">Normal</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Suhu Udara</div>
+              <div class="card-bottom">
+                <span class="card-value" id="env-temp">29.3</span>
+                <span class="card-unit">°C</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon blue">💧</div>
+              <span class="card-tag tag-normal">Normal</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Kelembapan</div>
+              <div class="card-bottom">
+                <span class="card-value" id="env-humidity">72</span>
+                <span class="card-unit">%RH</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon purple">📊</div>
+              <span class="card-tag tag-warning" id="env-thi-tag">Waspada</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Indeks THI</div>
+              <div class="card-bottom">
+                <span class="card-value" id="env-thi">78.5</span>
+                <span class="card-unit">THI</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon orange">🧪</div>
+              <span class="card-tag tag-normal">Aman</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Gas Amonia (NH₃)</div>
+              <div class="card-bottom">
+                <span class="card-value" id="env-ammonia">12</span>
+                <span class="card-unit">ppm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon green">💨</div>
+              <span class="card-tag tag-normal" id="fan-mode-tag">High Speed</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Kecepatan Kipas</div>
+              <div class="card-bottom">
+                <span class="card-value" id="fan-speed">1.800</span>
+                <span class="card-unit">RPM</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-title">🌀 Kontrol Kipas Otomatis Berbasis THI</div>
+          <p class="info-desc" id="fan-control-desc">
+            Kipas saat ini berputar pada mode <strong>High (100%)</strong> karena indeks THI mencapai <strong>78.5</strong> (Kategori Stres Panas). Sistem secara otomatis menaikkan kecepatan kipas untuk mempercepat pendinginan suhu kandang.
+          </p>
+        </div>
+      </div>
+
+      <!-- Tab Pemantauan Ternak -->
+      <div id="tab-ternak" class="tab-content">
+        <div class="section-header">
+          <div>
+            <h3>Pemantauan Status & Kesehatan Ternak Sapi</h3>
+            <p>Informasi jumlah populasi sapi dan deteksi stres lingkungan (THI)</p>
+          </div>
+        </div>
+
+        <div class="cards-grid" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon yellow">🐄</div>
+              <span class="card-tag tag-normal">Terdata</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Populasi Dipantau</div>
+              <div class="card-bottom">
+                <span class="card-value">24</span>
+                <span class="card-unit">ekor sapi</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column: span 3;">
+            <div class="card-top">
+              <div class="card-icon purple">❤️</div>
+              <span class="card-tag tag-warning" id="cattle-status-tag">Waspada Stres</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Indikasi Keadaan Sapi (Nilai THI: <span id="cattle-thi-val">78.5</span>)</div>
+              <div class="card-bottom">
+                <span class="card-value" id="cattle-status-title" style="font-size: 20px;">Stres Panas Ringan (Mild Stress)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-title">🔍 Analisis Kesehatan Lingkungan Ternak</div>
+          <p class="info-desc" id="cattle-status-desc">
+            Berdasarkan nilai indeks THI saat ini (78.5), sapi berpotensi mengalami rasa hangat berlebih. Disarankan untuk memastikan ketersediaan air minum dan menyalakan kipas/ventilasi kandang secara optimal.
+          </p>
+        </div>
+      </div>
+
+      <!-- Tab Pakan dan Minum (Input Petani: kg & liter + localStorage) -->
+      <div id="tab-pakan" class="tab-content">
+        <div class="section-header">
+          <div>
+            <h3>Ketersediaan & Pengisian Stok Pakan/Minum</h3>
+            <p>Isi dan pantau kapasitas stok persediaan tempat pakan (kg) & air minum (liter)</p>
+          </div>
+        </div>
+
+        <!-- Indicator Status Stok -->
+        <div class="cards-grid" style="grid-template-columns: repeat(2, 1fr);">
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon green">🌾</div>
+              <span class="card-tag tag-normal" id="feed-status-tag">Mencukupi</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Stok Pakan Saat Ini (Kapasitas: 600 kg)</div>
+              <div class="card-bottom">
+                <span class="card-value" id="feed-stock-val">500</span>
+                <span class="card-unit">kg (<span id="feed-percent">83</span>%)</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="feed-bar" style="width: 83%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon blue">💧</div>
+              <span class="card-tag tag-normal" id="water-status-tag">Sangat Cukup</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Stok Air Minum Saat Ini (Kapasitas: 2.000 Liter)</div>
+              <div class="card-bottom">
+                <span class="card-value" id="water-stock-val">1.800</span>
+                <span class="card-unit">Liter (<span id="water-percent">90</span>%)</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="water-bar" style="width: 90%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Input Petani -->
+        <div class="form-card" style="margin-top: 24px;">
+          <div class="info-title" style="margin-bottom: 16px;">✏️ Form Pengisian Stok Oleh Petani</div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+              <label class="form-label">Masukkan Jumlah Pakan Baru (kg)</label>
+              <div class="input-wrapper">
+                <input type="number" id="input-feed" class="form-input" placeholder="Contoh: 500" value="500" max="600" min="0" />
+                <button class="btn-update" onclick="updateStokPakan()">Simpan Pakan</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Masukkan Jumlah Air Minum Baru (Liter)</label>
+              <div class="input-wrapper">
+                <input type="number" id="input-water" class="form-input" placeholder="Contoh: 1800" value="1800" max="2000" min="0" />
+                <button class="btn-update" onclick="updateStokAir()">Simpan Air</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Riwayat dan Laporan -->
+      <div id="tab-laporan" class="tab-content">
+        <div class="section-header">
+          <div>
+            <h3>Riwayat & Laporan Terintegrasi Kandang</h3>
+            <p>Rekap harian dan bulanan seluruh parameter lingkungan, ternak, dan pakan</p>
+          </div>
+          <button class="btn-primary" onclick="alert('Mengunduh Laporan Terintegrasi (PDF)...')">📥 Unduh Laporan PDF</button>
+        </div>
+
+        <div class="cards-grid" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon pink">🌡️</div>
+              <span class="card-tag tag-normal">Rata-rata</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Suhu Bulanan</div>
+              <div class="card-bottom">
+                <span class="card-value">28.7</span>
+                <span class="card-unit">°C</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon purple">📊</div>
+              <span class="card-tag tag-normal">Stabil</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Rata-rata Indeks THI</div>
+              <div class="card-bottom">
+                <span class="card-value">75.2</span>
+                <span class="card-unit">THI</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon yellow">🐄</div>
+              <span class="card-tag tag-normal">Sehat</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Kondisi Populasi</div>
+              <div class="card-bottom">
+                <span class="card-value">24/24</span>
+                <span class="card-unit">Ekor Sehat</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-top">
+              <div class="card-icon green">🌾</div>
+              <span class="card-tag tag-normal">Aman</span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #8c6a75; margin-bottom: 2px;">Total Konsumsi Pakan</div>
+              <div class="card-bottom">
+                <span class="card-value">7.200</span>
+                <span class="card-unit">kg / bulan</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-title">📅 Rekapitulasi Laporan Harian Terakhir</div>
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Suhu Rata-Rata</th>
+                <th>Status THI & Kipas</th>
+                <th>Sapi Dipantau</th>
+                <th>Stok Pakan (kg)</th>
+                <th>Stok Air (L)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>11 Okt 2026</td>
+                <td>29.3 °C</td>
+                <td>78.5 (High Speed)</td>
+                <td>24 Ekor (Waspada Stres)</td>
+                <td>500 kg</td>
+                <td>1.800 L</td>
+              </tr>
+              <tr>
+                <td>10 Okt 2026</td>
+                <td>27.8 °C</td>
+                <td>73.1 (Medium Speed)</td>
+                <td>24 Ekor (Nyaman)</td>
+                <td>450 kg</td>
+                <td>1.650 L</td>
+              </tr>
+              <tr>
+                <td>09 Okt 2026</td>
+                <td>26.5 °C</td>
+                <td>69.8 (Low Speed)</td>
+                <td>24 Ekor (Nyaman)</td>
+                <td>580 kg</td>
+                <td>1.900 L</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // Memuat data tersimpan dari localStorage saat pertama dibuka
+    document.addEventListener("DOMContentLoaded", function() {
+      loadSavedStok();
+    });
+
+    function loadSavedStok() {
+      const savedFeed = localStorage.getItem("farmguard_feed");
+      if (savedFeed !== null) {
+        document.getElementById('input-feed').value = savedFeed;
+        renderPakan(parseInt(savedFeed));
+      }
+
+      const savedWater = localStorage.getItem("farmguard_water");
+      if (savedWater !== null) {
+        document.getElementById('input-water').value = savedWater;
+        renderAir(parseInt(savedWater));
+      }
+    }
+
+    // Fungsi Input Manual Stok Pakan Oleh Petani (kg) + localStorage
+    function updateStokPakan() {
+      const val = parseInt(document.getElementById('input-feed').value) || 0;
+      localStorage.setItem("farmguard_feed", val);
+      renderPakan(val);
+      alert('Stok Pakan berhasil diperbarui dan tersimpan!');
+    }
+
+    function renderPakan(val) {
+      const maxCap = 600;
+      const percent = Math.min(100, Math.round((val / maxCap) * 100));
+
+      document.getElementById('feed-stock-val').innerText = val;
+      document.getElementById('feed-percent').innerText = percent;
+      document.getElementById('feed-bar').style.width = percent + '%';
+
+      if (percent < 25) {
+        document.getElementById('feed-status-tag').innerText = 'Hampir Habis';
+        document.getElementById('feed-status-tag').className = 'card-tag tag-warning';
+      } else {
+        document.getElementById('feed-status-tag').innerText = 'Mencukupi';
+        document.getElementById('feed-status-tag').className = 'card-tag tag-normal';
+      }
+    }
+
+    // Fungsi Input Manual Stok Air Oleh Petani (Liter) + localStorage
+    function updateStokAir() {
+      const val = parseInt(document.getElementById('input-water').value) || 0;
+      localStorage.setItem("farmguard_water", val);
+      renderAir(val);
+      alert('Stok Air Minum berhasil diperbarui dan tersimpan!');
+    }
+
+    function renderAir(val) {
+      const maxCap = 2000;
+      const percent = Math.min(100, Math.round((val / maxCap) * 100));
+
+      document.getElementById('water-stock-val').innerText = val;
+      document.getElementById('water-percent').innerText = percent;
+      document.getElementById('water-bar').style.width = percent + '%';
+
+      if (percent < 25) {
+        document.getElementById('water-status-tag').innerText = 'Hampir Habis';
+        document.getElementById('water-status-tag').className = 'card-tag tag-warning';
+      } else {
+        document.getElementById('water-status-tag').innerText = 'Sangat Cukup';
+        document.getElementById('water-status-tag').className = 'card-tag tag-normal';
+      }
+    }
+
+    function switchTab(tabId, pageTitle, element) {
+      const tabs = document.querySelectorAll('.tab-content');
+      tabs.forEach(tab => tab.classList.remove('active-content'));
+
+      const selectedTab = document.getElementById('tab-' + tabId);
+      if (selectedTab) {
+        selectedTab.classList.add('active-content');
+      }
+
+      document.getElementById('page-title').innerText = pageTitle;
+
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => item.classList.remove('active'));
+      element.classList.add('active');
+    }
+
+    function goToTab(tabId, btnId, pageTitle) {
+      const targetBtn = document.getElementById(btnId);
+      switchTab(tabId, pageTitle, targetBtn);
+    }
+
+    // Fungsi Simulasi Perbarui Data Sensor
+    function perbaruiData() {
+      const newTemp = (28.5 + Math.random() * 2).toFixed(1);
+      const newHumidity = Math.floor(70 + Math.random() * 5);
+      const newThi = (70 + Math.random() * 10).toFixed(1);
+      const newAmmonia = Math.floor(10 + Math.random() * 5);
+
+      document.getElementById('hero-temp').innerText = newTemp + '°C';
+      document.getElementById('header-temp').innerText = newTemp + '°C';
+      document.getElementById('env-temp').innerText = newTemp;
+      document.getElementById('env-humidity').innerText = newHumidity;
+      document.getElementById('env-thi').innerText = newThi;
+      document.getElementById('env-ammonia').innerText = newAmmonia;
+
+      // Update Putaran Kipas Berdasarkan THI (Low, Medium, High)
+      let fanRpm = 1200;
+      let fanModeText = 'Medium Speed';
+      let fanDescText = '';
+
+      if (newThi < 72) {
+        fanRpm = 600;
+        fanModeText = 'Low Speed';
+        fanDescText = `Kipas saat ini berputar pada mode <strong>Low (30%)</strong> karena indeks THI berada di angka ideal <strong>${newThi}</strong> (Sapi Nyaman).`;
+        document.getElementById('env-thi-tag').innerText = 'Nyaman';
+      } else if (newThi >= 72 && newThi <= 78) {
+        fanRpm = 1200;
+        fanModeText = 'Medium Speed';
+        fanDescText = `Kipas otomatis naik ke mode <strong>Medium (65%)</strong> karena indeks THI berada di angka <strong>${newThi}</strong> (Waspada Stres Ringan).`;
+        document.getElementById('env-thi-tag').innerText = 'Waspada';
+      } else {
+        fanRpm = 1800;
+        fanModeText = 'High Speed';
+        fanDescText = `Kipas berputar maksimal pada mode <strong>High (100%)</strong> karena indeks THI tinggi di angka <strong>${newThi}</strong> (Bahaya Stres Panas).`;
+        document.getElementById('env-thi-tag').innerText = 'Bahaya';
+      }
+
+      document.getElementById('fan-speed').innerText = fanRpm.toLocaleString('id-ID');
+      document.getElementById('fan-mode-tag').innerText = fanModeText;
+      document.getElementById('fan-control-desc').innerHTML = fanDescText;
+
+      // Update THI & Kondisi Sapi
+      document.getElementById('cattle-thi-val').innerText = newThi;
+      if (newThi < 72) {
+        document.getElementById('cattle-status-tag').innerText = 'Nyaman';
+        document.getElementById('cattle-status-title').innerText = 'Sapi Nyaman & Segar (Comfort Zone)';
+        document.getElementById('cattle-status-desc').innerText = 'Kondisi suhu dan kelembapan sangat ideal. Sapi tidak mengalami stres panas, nafsu makan dan produksi susu optimal.';
+      } else if (newThi >= 72 && newThi <= 78) {
+        document.getElementById('cattle-status-tag').innerText = 'Waspada Stres';
+        document.getElementById('cattle-status-title').innerText = 'Stres Panas Ringan (Mild Stress)';
+        document.getElementById('cattle-status-desc').innerText = 'Sapi mulai merasa hangat. Kipas sedang berputar Medium untuk menjaga sirkulasi udara tetap segar.';
+      } else {
+        document.getElementById('cattle-status-tag').innerText = 'Bahaya Stres';
+        document.getElementById('cattle-status-title').innerText = 'Stres Panas Sedang (Moderate Stress)';
+        document.getElementById('cattle-status-desc').innerText = 'Suhu ruang cukup tinggi! Kipas otomatis berputar High (maksimal) dan pastikan pasokan air minum sapi tercukupi.';
+      }
+
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+      const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      
+      document.getElementById('last-update').innerText = `${dateStr} · ${timeStr}`;
+
+      alert('Data sensor & kondisi ternak berhasil diperbarui!');
+    }
+  </script>
+
+</body>
+</html>
